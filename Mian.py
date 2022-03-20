@@ -3,8 +3,8 @@ import os
 import Ui_dilizhijian
 
 
-from PyQt5.QtWidgets import *
-from PyQt5.QtGui import *
+from PyQt5.QtWidgets import QApplication,QMainWindow,QFileDialog,QMessageBox
+from PyQt5.QtGui import QPixmap
 
 
 
