@@ -1,3 +1,4 @@
+
 import sys
 import os
 import Ui_dilizhijian
@@ -5,7 +6,7 @@ import Ui_dilizhijian
 
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
-
+from PyQt5 import QtCore
 
 
 
@@ -15,12 +16,21 @@ class MainWindow(QMainWindow):
     DataID = 0
     #数据数量
     NumOfData = 0
+    #
+    movex = ""
+    movey = ""
+    # 
+    FilePath=""
+
     def __init__(self):
         super().__init__()
         # 使用ui文件导入定义界面类
         self.ui =Ui_dilizhijian.Ui_MainWindow()
         # 初始化界面
         self.ui.setupUi(self)
+        #鼠标移入label中变成普通光标
+        self.ui.label.setCursor(QtCore.Qt.PointingHandCursor)       #手型光标
+
         #为每个控件添加相应的响应
         self.ui.OpenFile.clicked.connect(self.on_click_OpenFile) 
 
@@ -39,23 +49,27 @@ class MainWindow(QMainWindow):
         #确保文件路径显示为空
         self.ui.textShow.clear()
         #打开选择文件对话框，并讲文件路径存入FilePath
-        FilePath, _  =QFileDialog.getOpenFileName(None,"选择打开文件")
+        self.FilePath, _  =QFileDialog.getOpenFileName(None,"选择打开文件")
         #显示文件路径显示
-        self.ui.FilePath.setText(FilePath)
+        self.ui.FilePath.setText(self.FilePath)
         #File_Name为全局变量
         global File_Name
         #获取文件名字以及文件类型
-        File_Name,file_extension=os.path.splitext(FilePath)
+        File_Name,file_extension=os.path.splitext(self.FilePath)
         #如果文档为txt类型，在文档类型中显示
         if file_extension=='.txt': 
-           f=open(FilePath,'r',encoding='utf-8')
+           f=open(self.FilePath,'r',encoding='utf-8')
            content=f.readlines()
            for line in content:
               self.ui.textShow.append(line)
         #若为其它类型则读为图片，此处仅为栅格数据
         else:
-            self.ui.label.setPixmap(QPixmap(FilePath).scaled(self.ui.label.width(),self.ui.label.height()))
-        
+            self.ui.label.setPixmap(QPixmap(self.FilePath).scaled(self.ui.label.width(),self.ui.label.height()))
+            self.label_w = self.ui.label.width()
+            self.label_x = self.ui.label.x()
+            self.label_y = self.ui.label.y()
+            self.label_h = self.ui.label.height()
+
         #判断错位信息集是否已经存在，若存在存入临时list中便与操作，特别注意文件名且文件与打开文件位于同一路径下
         if os.path.exists(File_Name+"_错误信息集.txt") == True:
             self.NumOfData=ReadDataFile(File_Name+"_错误信息集.txt")
@@ -64,6 +78,46 @@ class MainWindow(QMainWindow):
             self.ui.ErrorLocation.setPlainText(listErrorLocation[self.DataID])
             self.ui.ErrorType.setPlainText(listErrorType[self.DataID])
             self.ui.ErrorDescription.setPlainText(listErrorDescription[self.DataID])
+    
+
+    def mousePressEvent(self, e):
+        if e.buttons() == QtCore.Qt.LeftButton:
+            self.flag = True
+ 
+    def mouseReleaseEvent(self, e):  #鼠标释放事件重写
+        self.flag = False
+        self.movex = ""
+        self.movey = ""
+
+    def mouseMoveEvent(self,e):
+        if  e.x()>= self.ui.tabWidget.x() and e.x()<=(self.ui.tabWidget.width()+self.ui.tabWidget.x()) and  e.y()>= self.ui.tabWidget.y() and e.y()<=(self.ui.tabWidget.height()+self.ui.tabWidget.y()):
+            if self.flag:
+                self.x1 = e.x()
+                self.y1 = e.y()
+            if self.movex != "" and self.movey != "":
+                self.label_x = self.label_x + (self.x1 -self.movex)
+                self.label_y = self.label_y + (self.y1 -self.movey)
+        self.movex = self.x1
+        self.movey = self.y1
+        self.ui.label.setGeometry(QtCore.QRect(self.label_x, self.label_y, self.label_w, self.label_h))
+        self.ui.label.setPixmap(QPixmap(self.FilePath).scaled(self.ui.label.width(),self.ui.label.height()))
+
+    def wheelEvent(self, e):
+        angle=e.angleDelta()                                       
+        angleY=angle.y()  # 竖直滚过的距离
+        if angleY > 0:
+
+            self.label_w*=1.05 
+            self.label_h*=1.05                                                    
+        elif angleY < 0:
+            self.label_w/=1.05 
+            self.label_h/=1.05  
+        
+        self.ui.label.setGeometry(QtCore.QRect(self.label_x, self.label_y, self.label_w, self.label_h))
+        self.ui.label.setPixmap(QPixmap(self.FilePath).scaled(self.ui.label.width(),self.ui.label.height()))
+
+
+           
     #点击首条
     def on_click_First(self):
         #初始化DataID为0，将界面内容全部刷新并显示数据
@@ -186,6 +240,5 @@ if __name__=='__main__':
   mainWindow = MainWindow()
   mainWindow.show()
   sys.exit(app.exec_())
-  
-      
+
 

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'e:\DESA\dilizhijian.ui'
+# Form implementation generated from reading ui file 'e:\test\dilizhijian.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.4
 #
@@ -81,12 +81,12 @@ class Ui_MainWindow(object):
         self.Cancel.setGeometry(QtCore.QRect(660, 450, 101, 61))
         self.Cancel.setObjectName("Cancel")
         self.tabWidget = QtWidgets.QTabWidget(self.centralwidget)
-        self.tabWidget.setGeometry(QtCore.QRect(10, 50, 421, 461))
+        self.tabWidget.setGeometry(QtCore.QRect(10, 50, 420, 460))
         self.tabWidget.setObjectName("tabWidget")
         self.tab = QtWidgets.QWidget()
         self.tab.setObjectName("tab")
         self.label = QtWidgets.QLabel(self.tab)
-        self.label.setGeometry(QtCore.QRect(1, 4, 411, 421))
+        self.label.setGeometry(QtCore.QRect(0, 0, 410, 430))
         self.label.setText("")
         self.label.setObjectName("label")
         self.tabWidget.addTab(self.tab, "")
@@ -109,7 +109,7 @@ class Ui_MainWindow(object):
         MainWindow.setStatusBar(self.statusbar)
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(1)
+        self.tabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
