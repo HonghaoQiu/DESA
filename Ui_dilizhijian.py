@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'e:\test\dilizhijian.ui'
+# Form implementation generated from reading ui file 'e:\DESA\dilizhijian.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.4
 #
@@ -81,12 +81,12 @@ class Ui_MainWindow(object):
         self.Cancel.setGeometry(QtCore.QRect(660, 450, 101, 61))
         self.Cancel.setObjectName("Cancel")
         self.tabWidget = QtWidgets.QTabWidget(self.centralwidget)
-        self.tabWidget.setGeometry(QtCore.QRect(10, 50, 420, 460))
+        self.tabWidget.setGeometry(QtCore.QRect(10, 50, 421, 461))
         self.tabWidget.setObjectName("tabWidget")
         self.tab = QtWidgets.QWidget()
         self.tab.setObjectName("tab")
         self.label = QtWidgets.QLabel(self.tab)
-        self.label.setGeometry(QtCore.QRect(0, 0, 410, 430))
+        self.label.setGeometry(QtCore.QRect(10, 10, 401, 411))
         self.label.setText("")
         self.label.setObjectName("label")
         self.tabWidget.addTab(self.tab, "")
@@ -97,7 +97,13 @@ class Ui_MainWindow(object):
         self.textShow.setObjectName("textShow")
         self.tabWidget.addTab(self.tab_2, "")
         self.ID = QtWidgets.QLabel(self.centralwidget)
-        self.ID.setGeometry(QtCore.QRect(560, 10, 291, 20))
+        self.ID.setGeometry(QtCore.QRect(510, 0, 291, 20))
+        font = QtGui.QFont()
+        font.setPointSize(13)
+        font.setBold(True)
+        font.setWeight(75)
+        self.ID.setFont(font)
+        self.ID.setAlignment(QtCore.Qt.AlignCenter)
         self.ID.setObjectName("ID")
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
