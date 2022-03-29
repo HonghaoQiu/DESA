@@ -37,8 +37,18 @@ class MainLoginWindow(QMainWindow):
       #链接mongodb
       client=MongoClient('localhost',27017)
       #取得对应的collection
-      
-     
+      collectionName="UserInfo"
+      db=client.Users
+      co=db[collectionName]
+      condition = {'UserName':Account,
+                    'PassWord':Password,}  
+      if co.find_one(condition) :
+          msg_box = QMessageBox(QMessageBox.Warning, '温馨提示', '登陆成功')
+          msg_box.exec_() 
+      else:
+          msg_box = QMessageBox(QMessageBox.Warning, '温馨提示', '账号或密码错误')
+          msg_box.exec_()   
+          
 
 
 if __name__=='__main__':
