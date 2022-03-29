@@ -12,6 +12,8 @@ from PyQt5 import QtCore
 
 
 class MainWindow(QMainWindow):
+    #用于存储当前谁操作
+    username=""
     #索引
     DataID = 0
     #数据数量

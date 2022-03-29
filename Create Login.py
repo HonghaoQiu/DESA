@@ -1,5 +1,3 @@
- 
-
 from pymongo import MongoClient
 from gridfs import *
 import os
@@ -17,7 +15,7 @@ userinfo={
 #result=co.insert_one(userinfo)
 
 condition = {'UserName':'test',
-             'PassWord':'test',}  
+            'PassWord':'test',}  
 if co.find_one(condition) :
   print(1)
 

@@ -1,5 +1,3 @@
- 
-
 from pymongo import MongoClient
 from gridfs import *
 import os

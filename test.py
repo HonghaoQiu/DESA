@@ -10,6 +10,7 @@ db=client.info
 dirs = 'E:\PHOTO\Cycle'
 #列出目录下的所有图片
 files = os.listdir(dirs)
+gridFS = GridFS(db, collection="fs")
 #遍历图片目录集合
 for file in files:
     #图片的全路径
@@ -21,7 +22,8 @@ for file in files:
     #创建写入流
     imgput = GridFS(db)
     #将数据写入，文件类型和名称通过前面的分割得到
-    insertimg=imgput.put(datatmp,content_type=f[1],filename=f[0])
+    if gridFS.find({'名字':f[0]})==0:
+        insertimg=imgput.put(datatmp,content_type=f[1],filename=f[0])
     datatmp.close()
 print("js")
 

@@ -13,7 +13,7 @@ from pymongo import MongoClient
 
 class MainLoginWindow(QDialog):
 
-
+    username=''
     def __init__(self):
         super().__init__()
         # 使用ui文件导入定义界面类
@@ -49,6 +49,7 @@ class MainLoginWindow(QDialog):
             condition = {'UserName':Account,
                     'PassWord':Password,}  
             if co.find_one(condition) :
+                self.username=Account
                 msg_box = QMessageBox(QMessageBox.Warning, '温馨提示', '登陆成功')
                 msg_box.exec_() 
                 self.accept() 
@@ -64,6 +65,7 @@ if __name__=='__main__':
     login.show()
     if login.exec_() == QDialog.Accepted:
         mainWindow = Main.MainWindow()
+        mainWindow.username=login.username
         mainWindow.show()
         sys.exit(app.exec_())
 
