@@ -1,6 +1,7 @@
 
 import sys
-import Ui_Login
+from  UI_Frame import Ui_Login 
+import Main
 
 
 from PyQt5.QtWidgets import *
@@ -10,52 +11,61 @@ from pymongo import MongoClient
 
 
 
-class MainLoginWindow(QMainWindow):
+class MainLoginWindow(QDialog):
 
 
-  def __init__(self):
-    super().__init__()
-    # 使用ui文件导入定义界面类
-    self.ui =Ui_Login.Ui_LoginWindow()
-    # 初始化界面
-    self.ui.setupUi(self)
-    #按键响应
-    self.ui.pushButtonRegister.clicked.connect(self.on_click_pushButtonRegister)
-    self.ui.pushButtonLogin.clicked.connect(self.on_click_pushButtonLogin)
-    
-  def on_click_pushButtonRegister(self):
-    msg_box = QMessageBox(QMessageBox.Warning, '温馨提示', '请联系管理员创建账户')
-    msg_box.exec_()
+    def __init__(self):
+        super().__init__()
+        # 使用ui文件导入定义界面类
+        self.ui =Ui_Login.Ui_Login()
+        # 初始化界面
+        self.ui.setupUi(self)
+        #按键响应
+        self.ui.pushButtonRegister.clicked.connect(self.on_click_pushButtonRegister)
+        self.ui.pushButtonLogin.clicked.connect(self.on_click_pushButtonLogin)
 
-  def on_click_pushButtonLogin(self):
-    Account=self.ui.AccountEdit.text()
-    Password=self.ui.PasswordEdit.text()
-    if Account=="" or Password == "":
-        msg_box = QMessageBox(QMessageBox.Warning, '温馨提示', '账号或密码为空')
-        msg_box.exec_()  
-    else: 
-      #链接mongodb
-      client=MongoClient('localhost',27017)
-      #取得对应的collection
-      collectionName="UserInfo"
-      db=client.Users
-      co=db[collectionName]
-      condition = {'UserName':Account,
+    #按下注册键后  
+    def on_click_pushButtonRegister(self):
+        msg_box = QMessageBox(QMessageBox.Warning, '温馨提示', '请联系管理员创建账户')
+        msg_box.exec_()
+    #按下登录键后
+    def on_click_pushButtonLogin(self):
+        #获取账号文本内容
+        Account=self.ui.AccountEdit.text()
+        #获取密码文本内容
+        Password=self.ui.PasswordEdit.text()
+        #依次判断不同情况
+        if Account=="" or Password == "":
+            msg_box = QMessageBox(QMessageBox.Warning, '温馨提示', '账号或密码为空')
+            msg_box.exec_()  
+        else: 
+            #链接mongodb
+            client=MongoClient('localhost',27017)
+            #取得对应的collection名字为UserInfo
+            collectionName="UserInfo"
+            db=client.Users
+            co=db[collectionName]
+            #查找的用户名密码
+            condition = {'UserName':Account,
                     'PassWord':Password,}  
-      if co.find_one(condition) :
-          msg_box = QMessageBox(QMessageBox.Warning, '温馨提示', '登陆成功')
-          msg_box.exec_() 
-      else:
-          msg_box = QMessageBox(QMessageBox.Warning, '温馨提示', '账号或密码错误')
-          msg_box.exec_()   
-          
+            if co.find_one(condition) :
+                msg_box = QMessageBox(QMessageBox.Warning, '温馨提示', '登陆成功')
+                msg_box.exec_() 
+                self.accept() 
+            else:
+                msg_box = QMessageBox(QMessageBox.Warning, '温馨提示', '账号或密码错误')
+                msg_box.exec_()   
+
 
 
 if __name__=='__main__':
+    app = QApplication(sys.argv)
+    login= MainLoginWindow()
+    login.show()
+    if login.exec_() == QDialog.Accepted:
+        mainWindow = Main.MainWindow()
+        mainWindow.show()
+        sys.exit(app.exec_())
 
-  app = QApplication(sys.argv)
-  login= MainLoginWindow()
-  login.show()
-  sys.exit(app.exec_())
 
 

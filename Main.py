@@ -1,7 +1,7 @@
 
 import sys
 import os
-import Ui_dilizhijian
+from  UI_Frame import Ui_dilizhijian
 
 
 from PyQt5.QtWidgets import *
@@ -24,6 +24,9 @@ class MainWindow(QMainWindow):
 
     def __init__(self):
         super().__init__()
+        self.listErrorLocation=[]
+        self.listErrorType=[]
+        self.listErrorDescription=[]
         # 使用ui文件导入定义界面类
         self.ui =Ui_dilizhijian.Ui_MainWindow()
         # 初始化界面
@@ -58,10 +61,10 @@ class MainWindow(QMainWindow):
         File_Name,file_extension=os.path.splitext(self.FilePath)
         #如果文档为txt类型，在文档类型中显示
         if file_extension=='.txt': 
-           f=open(self.FilePath,'r',encoding='utf-8')
-           content=f.readlines()
-           for line in content:
-              self.ui.textShow.append(line)
+            f=open(self.FilePath,'r',encoding='utf-8')
+            content=f.readlines()
+            for line in content:
+                    self.ui.textShow.append(line)
         #若为其它类型则读为图片，此处仅为栅格数据
         else:
             self.ui.label.setPixmap(QPixmap(self.FilePath).scaled(self.ui.label.width(),self.ui.label.height()))
@@ -72,18 +75,18 @@ class MainWindow(QMainWindow):
 
         #判断错位信息集是否已经存在，若存在存入临时list中便与操作，特别注意文件名且文件与打开文件位于同一路径下
         if os.path.exists(File_Name+"_错误信息集.txt") == True:
-            self.NumOfData=ReadDataFile(File_Name+"_错误信息集.txt")
+            self.NumOfData=self.ReadDataFile(File_Name+"_错误信息集.txt")
             self.DataID=0
             self.ui.ID.setText("第  "+ str(self.DataID + 1)+"   条")
-            self.ui.ErrorLocation.setPlainText(listErrorLocation[self.DataID])
-            self.ui.ErrorType.setPlainText(listErrorType[self.DataID])
-            self.ui.ErrorDescription.setPlainText(listErrorDescription[self.DataID])
+            self.ui.ErrorLocation.setPlainText(self.listErrorLocation[self.DataID])
+            self.ui.ErrorType.setPlainText(self.listErrorType[self.DataID])
+            self.ui.ErrorDescription.setPlainText(self.listErrorDescription[self.DataID])
     
 
     def mousePressEvent(self, e):
         if e.buttons() == QtCore.Qt.LeftButton:
             self.flag = True
- 
+
     def mouseReleaseEvent(self, e):  #鼠标释放事件重写
         self.flag = False
         self.movex = ""
@@ -117,15 +120,15 @@ class MainWindow(QMainWindow):
         self.ui.label.setPixmap(QPixmap(self.FilePath).scaled(self.ui.label.width(),self.ui.label.height()))
 
 
-           
+
     #点击首条
     def on_click_First(self):
         #初始化DataID为0，将界面内容全部刷新并显示数据
         self.DataID=0
         self.ui.ID.setText("第  "+ str(self.DataID + 1)+"   条")
-        self.ui.ErrorLocation.setPlainText(listErrorLocation[self.DataID])
-        self.ui.ErrorType.setPlainText(listErrorType[self.DataID])
-        self.ui.ErrorDescription.setPlainText(listErrorDescription[self.DataID])
+        self.ui.ErrorLocation.setPlainText(self.listErrorLocation[self.DataID])
+        self.ui.ErrorType.setPlainText(self.listErrorType[self.DataID])
+        self.ui.ErrorDescription.setPlainText(self.listErrorDescription[self.DataID])
     
     #点击上一条
     def on_click_Previous(self):
@@ -135,9 +138,9 @@ class MainWindow(QMainWindow):
             msg_box.exec_()
         else:    
             self.DataID=self.DataID-1   
-            self.ui.ErrorLocation.setPlainText(listErrorLocation[self.DataID])
-            self.ui.ErrorType.setPlainText(listErrorType[self.DataID])
-            self.ui.ErrorDescription.setPlainText(listErrorDescription[self.DataID])      
+            self.ui.ErrorLocation.setPlainText(self.listErrorLocation[self.DataID])
+            self.ui.ErrorType.setPlainText(self.listErrorType[self.DataID])
+            self.ui.ErrorDescription.setPlainText(self.listErrorDescription[self.DataID])      
         self.ui.ID.setText("第  "+ str(self.DataID + 1)+"   条")
 
     #点击下一条
@@ -149,25 +152,25 @@ class MainWindow(QMainWindow):
         else:   
             self.DataID=self.DataID+1
             #判断是否已添加数据，若存在则显示已有数据，若为添加则刷新文本框
-            if (len(listErrorLocation) - 1) >= self.DataID:
-              self.ui.ErrorLocation.setPlainText(listErrorLocation[self.DataID])
-              self.ui.ErrorType.setPlainText(listErrorType[self.DataID])
-              self.ui.ErrorDescription.setPlainText(listErrorDescription[self.DataID])     
+            if (len(self.listErrorLocation) - 1) >= self.DataID:
+                self.ui.ErrorLocation.setPlainText(self.listErrorLocation[self.DataID])
+                self.ui.ErrorType.setPlainText(self.listErrorType[self.DataID])
+                self.ui.ErrorDescription.setPlainText(self.listErrorDescription[self.DataID])     
             else: 
-              self.ui.ErrorLocation.clear()
-              self.ui.ErrorType.clear()
-              self.ui.ErrorDescription.clear()
+                self.ui.ErrorLocation.clear()
+                self.ui.ErrorType.clear()
+                self.ui.ErrorDescription.clear()
         self.ui.ID.setText("第  "+ str(self.DataID + 1)+"   条")  
 
     #点击末条
     def on_click_Last(self):
         #初始化DataID为NumOfData-1，将界面内容全部刷新并显示数据
         self.DataID = self.NumOfData - 1 
-        self.ui.ErrorLocation.setPlainText(listErrorLocation[self.DataID])
-        self.ui.ErrorType.setPlainText(listErrorType[self.DataID])
-        self.ui.ErrorDescription.setPlainText(listErrorDescription[self.DataID])      
+        self.ui.ErrorLocation.setPlainText(self.listErrorLocation[self.DataID])
+        self.ui.ErrorType.setPlainText(self.listErrorType[self.DataID])
+        self.ui.ErrorDescription.setPlainText(self.listErrorDescription[self.DataID])      
         self.ui.ID.setText("第  "+ str(self.DataID + 1)+"   条")
- 
+
     #点击保存
     def on_click_Record(self):
         #获取文本框内容
@@ -181,9 +184,9 @@ class MainWindow(QMainWindow):
         #数据数加一
         self.NumOfData = self.NumOfData + 1
         #临时存储所有数据
-        listErrorLocation.append(ErrorLocation)
-        listErrorType.append(ErrorType)
-        listErrorDescription.append(ErrorDescription)
+        self.listErrorLocation.append(ErrorLocation)
+        self.listErrorType.append(ErrorType)
+        self.listErrorDescription.append(ErrorDescription)
         #给用户提示
         SaveBox=QMessageBox()
         SaveBox.about(None,'保存成功','数据保存成功')
@@ -191,9 +194,9 @@ class MainWindow(QMainWindow):
     #点击取消
     def on_click_Cancel(self):
         #清空文本框内容
-         self.ui.ErrorLocation.clear()
-         self.ui.ErrorType.clear()
-         self.ui.ErrorDescription.clear()
+        self.ui.ErrorLocation.clear()
+        self.ui.ErrorType.clear()
+        self.ui.ErrorDescription.clear()
     
     #点击检索
     def on_click_Find(self):
@@ -202,43 +205,33 @@ class MainWindow(QMainWindow):
         #判定是否找到
         flag = 0
         for n in range(self.NumOfData):
-            if info==listErrorDescription[n] or info==listErrorDescription[n] or info==listErrorDescription[n] :
-               self.ui.ErrorLocation.setPlainText(listErrorLocation[n])
-               self.ui.ErrorType.setPlainText(listErrorType[n])
-               self.ui.ErrorDescription.setPlainText(listErrorDescription[n])      
-               self.ui.ID.setText("第  "+ str(n + 1)+"   条")  
-               flag =1
+            if info==self.listErrorDescription[n] or info==self.listErrorDescription[n] or info==self.listErrorDescription[n] :
+                self.ui.ErrorLocation.setPlainText(self.listErrorLocation[n])
+                self.ui.ErrorType.setPlainText(self.listErrorType[n])
+                self.ui.ErrorDescription.setPlainText(self.listErrorDescription[n])      
+                self.ui.ID.setText("第  "+ str(n + 1)+"   条")  
+                flag =1
             if n==self.NumOfData-1 and  flag ==0:
-               QMessageBox.warning(self,"Warning",'NONE')
+                QMessageBox.warning(self,"Warning",'NONE')
         self.ui.textFind.clear()
 
 
-#读取已有数据文件
-def ReadDataFile(filepath):
-    f=open(filepath,'r',encoding='utf-8')
-    linelists=f.readlines() #读取所有数据
-    f.close()
-    num=0
-    #变量数据分别存储的到listErrorLocation,listErrorType,listErrorDescription中
-    for line in linelists: 
-        id,a,b,c=line.split()
-        listErrorLocation.append(a)
-        listErrorType.append(b)
-        listErrorDescription.append(c)
-        num+=1
+    #读取已有数据文件
+    def ReadDataFile(self,filepath):
+        f=open(filepath,'r',encoding='utf-8')
+        linelists=f.readlines() #读取所有数据
+        f.close()
+        num=0
+        #变量数据分别存储的到listErrorLocation,listErrorType,listErrorDescription中
+        for line in linelists: 
+            id,a,b,c=line.split()
+            self.listErrorLocation.append(a)
+            self.listErrorType.append(b)
+            self.listErrorDescription.append(c)
+            num+=1
     #返回现有数据个数
-    return num  
+        return num  
 
 
-if __name__=='__main__':
-  #作临时存储方便后续操作  
-  listErrorLocation=[]
-  listErrorType=[]
-  listErrorDescription=[]
-
-  app = QApplication(sys.argv)
-  mainWindow = MainWindow()
-  mainWindow.show()
-  sys.exit(app.exec_())
 
 
