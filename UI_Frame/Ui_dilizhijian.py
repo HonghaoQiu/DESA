@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'e:\DESA\dilizhijian.ui'
+# Form implementation generated from reading ui file 'e:\DESA\UI_Frame\dilizhijian.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.4
 #
@@ -14,7 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(820, 540)
+        MainWindow.resize(828, 540)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.layoutWidget = QtWidgets.QWidget(self.centralwidget)
@@ -67,10 +67,10 @@ class Ui_MainWindow(object):
         self.LabelDescription.setGeometry(QtCore.QRect(430, 210, 81, 31))
         self.LabelDescription.setObjectName("LabelDescription")
         self.OpenFile = QtWidgets.QPushButton(self.centralwidget)
-        self.OpenFile.setGeometry(QtCore.QRect(10, 10, 81, 31))
+        self.OpenFile.setGeometry(QtCore.QRect(90, 10, 81, 31))
         self.OpenFile.setObjectName("OpenFile")
         self.FilePath = QtWidgets.QTextEdit(self.centralwidget)
-        self.FilePath.setGeometry(QtCore.QRect(110, 10, 311, 31))
+        self.FilePath.setGeometry(QtCore.QRect(180, 10, 241, 31))
         self.FilePath.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
         self.FilePath.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
         self.FilePath.setObjectName("FilePath")
@@ -105,9 +105,12 @@ class Ui_MainWindow(object):
         self.ID.setFont(font)
         self.ID.setAlignment(QtCore.Qt.AlignCenter)
         self.ID.setObjectName("ID")
+        self.extractData = QtWidgets.QPushButton(self.centralwidget)
+        self.extractData.setGeometry(QtCore.QRect(0, 10, 81, 31))
+        self.extractData.setObjectName("extractData")
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 820, 26))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 828, 26))
         self.menubar.setObjectName("menubar")
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
@@ -135,3 +138,4 @@ class Ui_MainWindow(object):
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("MainWindow", "地图类型"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _translate("MainWindow", "文档类型"))
         self.ID.setText(_translate("MainWindow", "第   条"))
+        self.extractData.setText(_translate("MainWindow", "提取"))

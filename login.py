@@ -59,15 +59,7 @@ class MainLoginWindow(QDialog):
 
 
 
-if __name__=='__main__':
-    app = QApplication(sys.argv)
-    login= MainLoginWindow()
-    login.show()
-    if login.exec_() == QDialog.Accepted:
-        mainWindow = Main.MainWindow()
-        mainWindow.username=login.username
-        mainWindow.show()
-        sys.exit(app.exec_())
+
 
 
 

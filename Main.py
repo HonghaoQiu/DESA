@@ -1,5 +1,9 @@
 
 import sys
+import datetime
+from unittest import result
+from pymongo import MongoClient
+from gridfs import *
 import os
 from  UI_Frame import Ui_dilizhijian
 
@@ -12,6 +16,10 @@ from PyQt5 import QtCore
 
 
 class MainWindow(QMainWindow):
+    #连接Mongodb数据库
+    client=MongoClient('localhost',27017)
+    #取得对应的collection
+    db=client.info
     #用于存储当前谁操作
     username=""
     #索引
@@ -26,6 +34,7 @@ class MainWindow(QMainWindow):
 
     def __init__(self):
         super().__init__()
+        #临时存储数据
         self.listErrorLocation=[]
         self.listErrorType=[]
         self.listErrorDescription=[]
@@ -37,6 +46,7 @@ class MainWindow(QMainWindow):
         self.ui.label.setCursor(QtCore.Qt.PointingHandCursor)       #手型光标
 
         #为每个控件添加相应的响应
+        self.ui.extractData.clicked.connect(self.on_click_extractData)
         self.ui.OpenFile.clicked.connect(self.on_click_OpenFile) 
 
         self.ui.First.clicked.connect(self.on_click_First)
@@ -60,9 +70,22 @@ class MainWindow(QMainWindow):
         #File_Name为全局变量
         global File_Name
         #获取文件名字以及文件类型
-        File_Name,file_extension=os.path.splitext(self.FilePath)
+        f = self.FilePath.split('/')
+        File_Name=f[-1].split('.')
+        gridFS = GridFS(self.db, collection="fs")
+        datatmp = open(self.FilePath, 'rb')
+        # 如果数据库中不存在该文件则存入数据库
+        if gridFS.exists({'filename':f[-1]})==0:
+            gridFS.put(datatmp,filename=f[-1])
+            datatmp.close()
+
+           
+
+
+
+
         #如果文档为txt类型，在文档类型中显示
-        if file_extension=='.txt': 
+        if File_Name[1]=='txt': 
             f=open(self.FilePath,'r',encoding='utf-8')
             content=f.readlines()
             for line in content:
@@ -74,10 +97,13 @@ class MainWindow(QMainWindow):
             self.label_x = self.ui.label.x()
             self.label_y = self.ui.label.y()
             self.label_h = self.ui.label.height()
+        
 
         #判断错位信息集是否已经存在，若存在存入临时list中便与操作，特别注意文件名且文件与打开文件位于同一路径下
-        if os.path.exists(File_Name+"_错误信息集.txt") == True:
-            self.NumOfData=self.ReadDataFile(File_Name+"_错误信息集.txt")
+        
+        self.NumOfData=self.ReadDataFile(File_Name[0]+"_错误信息集")
+
+        if self.NumOfData!=0:
             self.DataID=0
             self.ui.ID.setText("第  "+ str(self.DataID + 1)+"   条")
             self.ui.ErrorLocation.setPlainText(self.listErrorLocation[self.DataID])
@@ -85,15 +111,18 @@ class MainWindow(QMainWindow):
             self.ui.ErrorDescription.setPlainText(self.listErrorDescription[self.DataID])
     
 
+    #鼠标点击事件重写
     def mousePressEvent(self, e):
         if e.buttons() == QtCore.Qt.LeftButton:
             self.flag = True
-
-    def mouseReleaseEvent(self, e):  #鼠标释放事件重写
+    
+    #鼠标释放事件重写
+    def mouseReleaseEvent(self, e):
         self.flag = False
         self.movex = ""
         self.movey = ""
 
+    #实现拖动图片
     def mouseMoveEvent(self,e):
         if  e.x()>= self.ui.tabWidget.x() and e.x()<=(self.ui.tabWidget.width()+self.ui.tabWidget.x()) and  e.y()>= self.ui.tabWidget.y() and e.y()<=(self.ui.tabWidget.height()+self.ui.tabWidget.y()):
             if self.flag:
@@ -107,9 +136,11 @@ class MainWindow(QMainWindow):
         self.ui.label.setGeometry(QtCore.QRect(self.label_x, self.label_y, self.label_w, self.label_h))
         self.ui.label.setPixmap(QPixmap(self.FilePath).scaled(self.ui.label.width(),self.ui.label.height()))
 
+    #实现缩放图片
     def wheelEvent(self, e):
-        angle=e.angleDelta()                                       
-        angleY=angle.y()  # 竖直滚过的距离
+        angle=e.angleDelta()  
+        # 竖直滚过的距离                                     
+        angleY=angle.y() 
         if angleY > 0:
 
             self.label_w*=1.05 
@@ -122,6 +153,14 @@ class MainWindow(QMainWindow):
         self.ui.label.setPixmap(QPixmap(self.FilePath).scaled(self.ui.label.width(),self.ui.label.height()))
 
 
+    #点击提取
+    def on_click_extractData(self):
+        gridFS = GridFS(self.db, collection="fs")
+        for grid_out in gridFS.find():
+            data = grid_out.read() # 获取图片数据
+            outf = open('Data\\'+grid_out.filename,'wb')#创建文件
+            outf.write(data)  # 存储图片
+            outf.close()
 
     #点击首条
     def on_click_First(self):
@@ -175,23 +214,45 @@ class MainWindow(QMainWindow):
 
     #点击保存
     def on_click_Record(self):
+        currentTime=datetime.datetime.now()
         #获取文本框内容
         ErrorLocation=self.ui.ErrorLocation.toPlainText()
         ErrorType=self.ui.ErrorType.toPlainText()
         ErrorDescription=self.ui.ErrorDescription.toPlainText()
         #将数据写入到错误信息集中
-        f=open(File_Name+"_错误信息集.txt",'a+',encoding='utf-8')
-        f.write(str(self.DataID)+' '+ErrorLocation+' '+ErrorType+' '+ErrorDescription+'\n')
-        f.close()
-        #数据数加一
-        self.NumOfData = self.NumOfData + 1
-        #临时存储所有数据
-        self.listErrorLocation.append(ErrorLocation)
-        self.listErrorType.append(ErrorType)
-        self.listErrorDescription.append(ErrorDescription)
-        #给用户提示
-        SaveBox=QMessageBox()
-        SaveBox.about(None,'保存成功','数据保存成功')
+        co=self.db[File_Name[0]+"_错误信息集"]
+        errorinfo={
+                    '_id':str(self.DataID),
+                    'ErrorLocation':ErrorLocation,
+                    'ErrorType':ErrorType,
+                    'ErroDescription':ErrorDescription,
+                    'User': self.username,
+                    'Time': str(currentTime)
+                    }
+        condition = {'_id':str(self.DataID)} 
+        if ErrorLocation=='' and ErrorType=='' and ErrorDescription =='':
+            SaveBox=QMessageBox()
+            SaveBox.about(None,'提示','未输入信息')
+        else:
+            if co.find_one(condition) :
+                errorinfoNOW = co.find_one(condition)  
+                errorinfoNOW = errorinfo  
+                co.update_one(condition, {'$set': errorinfoNOW})  
+                self.listErrorLocation[self.DataID]=ErrorLocation
+                self.listErrorType[self.DataID]=ErrorType
+                self.listErrorDescription[self.DataID]=ErrorDescription
+            else :
+                co.insert_one(errorinfo)
+            #数据数加一
+                self.NumOfData = self.NumOfData + 1
+            #临时存储所有数据
+            
+                self.listErrorLocation.append(ErrorLocation)
+                self.listErrorType.append(ErrorType)
+                self.listErrorDescription.append(ErrorDescription)
+            #给用户提示
+            SaveBox=QMessageBox()
+            SaveBox.about(None,'保存成功','数据保存成功')
 
     #点击取消
     def on_click_Cancel(self):
@@ -220,20 +281,19 @@ class MainWindow(QMainWindow):
 
     #读取已有数据文件
     def ReadDataFile(self,filepath):
-        f=open(filepath,'r',encoding='utf-8')
-        linelists=f.readlines() #读取所有数据
-        f.close()
+        res=self.db[filepath].find()
         num=0
-        #变量数据分别存储的到listErrorLocation,listErrorType,listErrorDescription中
-        for line in linelists: 
-            id,a,b,c=line.split()
-            self.listErrorLocation.append(a)
-            self.listErrorType.append(b)
-            self.listErrorDescription.append(c)
+        for i in res:
             num+=1
+        print(num)
+        #变量数据分别存储的到listErrorLocation,listErrorType,listErrorDescription中
+        if num >0:
+            m=self.db[filepath].find()
+            for d in m: 
+                self.listErrorLocation.append(d['ErrorLocation'])
+                self.listErrorType.append(d['ErrorType'])
+                self.listErrorDescription.append(d['ErroDescription'])
     #返回现有数据个数
         return num  
-
-
 
 

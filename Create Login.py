@@ -17,8 +17,13 @@ userinfo={
 condition = {'UserName':'test',
             'PassWord':'test',}  
 if co.find_one(condition) :
-  print(1)
+  print(3)
 
+re=co.find()
+for i in re :
+      print(i['UserName'])
+
+      
 
 
 

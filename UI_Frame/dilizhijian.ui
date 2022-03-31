@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>820</width>
+    <width>828</width>
     <height>540</height>
    </rect>
   </property>
@@ -161,7 +161,7 @@
    <widget class="QPushButton" name="OpenFile">
     <property name="geometry">
      <rect>
-      <x>10</x>
+      <x>90</x>
       <y>10</y>
       <width>81</width>
       <height>31</height>
@@ -174,9 +174,9 @@
    <widget class="QTextEdit" name="FilePath">
     <property name="geometry">
      <rect>
-      <x>110</x>
+      <x>180</x>
       <y>10</y>
-      <width>311</width>
+      <width>241</width>
       <height>31</height>
      </rect>
     </property>
@@ -282,13 +282,26 @@
      <set>Qt::AlignCenter</set>
     </property>
    </widget>
+   <widget class="QPushButton" name="extractData">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>10</y>
+      <width>81</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>提取</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>820</width>
+     <width>828</width>
      <height>26</height>
     </rect>
    </property>
