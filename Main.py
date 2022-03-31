@@ -6,8 +6,6 @@ from pymongo import MongoClient
 from gridfs import *
 import os
 from  UI_Frame import Ui_dilizhijian
-
-
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5 import QtCore
