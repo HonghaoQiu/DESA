@@ -8,20 +8,18 @@ collectionName="UserInfo"
 db=client.Users
 co=db[collectionName]
 userinfo={
-    '_id':'0',
     'UserName':'test',
     'PassWord':'test',
 }
 #result=co.insert_one(userinfo)
 
-condition = {'UserName':'test',
-            'PassWord':'test',}  
-if co.find_one(condition) :
-  print(3)
 
-re=co.find()
-for i in re :
-      print(i['UserName'])
+if co.find_one(userinfo) :
+  i=0
+else :
+  result=co.insert_one(userinfo)
+
+
 
       
 
