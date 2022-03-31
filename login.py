@@ -1,9 +1,6 @@
-
 import sys
 from  UI_Frame import Ui_Login 
 import Main
-
-
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5 import QtCore
